@@ -1,0 +1,15 @@
+{
+  "name": "light-task",
+  "version": "1.0.0",
+  "description": "A simple task application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "task",
+    "application"
+  ],
+  "author": "fwg",
+  "license": "ISC"
+}
