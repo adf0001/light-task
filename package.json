@@ -11,5 +11,18 @@
     "application"
   ],
   "author": "fwg",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "supervisor": "^0.12.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adf0001/light-task.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adf0001/light-task/issues"
+  },
+  "homepage": "https://github.com/adf0001/light-task#readme"
 }
