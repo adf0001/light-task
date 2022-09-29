@@ -29,59 +29,56 @@ A simple task application
 	CREATE TABLE "tasks" (
 		"id"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 		"title"  text NOT NULL,
-		"updated_at"  DATETIME NOT NULL,
-		"created_at"  DATETIME NOT NULL,
-		"expire_at"  DATETIME NOT NULL,
-		"done_at"  DATETIME
+		"updated_at"  DATETIME NOT NULL,	-- UTC+0
+		"created_at"  DATETIME NOT NULL,	-- UTC+0
+		"expire_at"  DATETIME NOT NULL,	-- UTC+0
+		"done_at"  DATETIME		-- UTC+0
 	);
 ```
 
 # RESTful api
-	* create
-		POST	/tasks/
-			request
-				{
-					title: "title",
-					expire_at: "YYYY-MM-DD" / "YYYY-MM-DD hh:mm:ss"
-				}
+	* create, POST	/tasks/
+		request
+			{
+				title: "title",
+				expire_at: "YYYY-MM-dd hh:mm:ss",		//UTC+0
+			}
 
-			response
-				status 200
-				{
-					msg: "OK",
-					rows:[
-						{id,...},
-						...
-					]
-				}
+		response
+			status 200
+			{
+				msg: "OK",
+				rows:[
+					{id,...},
+					...
+				]
+			}
 
-	* update
-		PUT		/tasks/{id}
-			request
-				{
-					title: "title",
-					expire_at: "YYYY-MM-DD" / "YYYY-MM-DD hh:mm:ss"
-				}
+	* update,	PUT	/tasks/{id}
+		request
+			{
+				title: "title",
+				expire_at: "YYYY-MM-dd hh:mm:ss",
+			}
 
-			response
-				refer to create
+		response
+			refer to create
 
-	* update: done
-		POST		/tasks/{id}/done		//update `done_at` to current time
-			response
-				refer to create
+	* update: done,	POST	/tasks/{id}/done		//update `done_at` to current time
+		response
+			refer to create
 	
-	* delete
-		DELETE		/tasks/{id}
-			response
-				refer to create
+	* delete,	DELETE	/tasks/{id}
+		response
+			refer to create
 	
-	* retrieve
-		GET		/tasks/
-		GET		/tasks/{id}
-		GET		/tasks/expire/{YYYY-MM-DD|YYYY-MM-DD hh:mm:ss|today}
-
-			response
-				refer to create
-
+	* retrieve: all,	GET		/tasks/
+		response
+			refer to create
+	* retrieve: single,	GET		/tasks/{id}
+		response
+			refer to create
+	* retrieve: expire,	GET		/tasks/expire/YYYY-MM-dd hh:mm:ss
+		response
+			refer to create
 

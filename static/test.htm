@@ -1,0 +1,123 @@
+﻿<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+	<style>
+		.-cmd {
+			color: green;
+			text-decoration: underline;
+			cursor: pointer;
+			font-size: 9pt;
+		}
+	</style>
+	<script>
+		function _ele(eleId) {
+			return document.getElementById(eleId);
+		}
+	</script>
+</head>
+<script>
+	function setMethod(v) {
+		_ele('inpMethod').value = v;
+	}
+	function setContentType(v) {
+		if (v === "form") v = "application/x-www-form-urlencoded";
+		else if (v === "json") v = "application/json";
+
+		_ele('inpContentType').value = v;
+	}
+
+	function setPart(method, path, bodyData, contentType) {
+		setMethod(method);
+		_ele("inpPath").value = path;
+		_ele("txtBody").value = (typeof bodyData === "string") ? bodyData : JSON.stringify(bodyData);
+
+		if (contentType) setContentType(contentType);
+	}
+</script>
+
+<body>
+	<div>
+		<table>
+			<tr>
+				<td>
+					Server<br>
+					<input id=inpServer value="http://127.0.0.1:8071/" style="width:500px"></input> <br>
+
+					Method
+					<span style="padding-left:1em;">
+						<span class="-cmd" onclick="setMethod('GET');">GET</span>
+						<span class="-cmd" onclick="setMethod('POST');">POST</span>
+						<span class="-cmd" onclick="setMethod('PUT');">PUT</span>
+						<span class="-cmd" onclick="setMethod('DELETE');">DELETE</span>
+					</span>
+					<br>
+					<input id=inpMethod value="GET" style="width:500px"></input><br>
+
+					Path<br>
+					<input id=inpPath value="" style="width:500px"></input><br>
+
+					Content type
+					<span style="padding-left:1em;">
+						<span class="-cmd" onclick="setContentType('application/x-www-form-urlencoded');">form</span>
+						<span class="-cmd" onclick="setContentType('application/json');">json</span>
+					</span>
+					<br>
+					<input id=inpContentType value="application/x-www-form-urlencoded" style="width:500px"></input><br>
+
+					Body<br>
+					<textarea id=txtBody style="width:500px;height:100px;vertical-align:top;"></textarea>
+				</td>
+				<td valign='top' style="overflow:auto;border-left:1px solid lightgrey;padding:0.5em;">
+					业务接口1
+					<br>
+					<span class="-cmd" onclick="setPart('POST','/tasks/',
+						{title:'task'+(new Date()).getTime(),expire_at:'2022-09-26 12:34:56'},'json');" title="create">create</span>
+
+					<br>
+					<br>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<button id=btnSend onclick="SendTestData()">send</button> &nbsp;
+
+	<textarea id=txtOut style="width:100%;height:300px;"></textarea>
+</body>
+
+<script>
+
+	function SendTestData() {
+		_ele('txtOut').value = "";
+
+		var xq = window.ActiveXObject ? (new ActiveXObject("Msxml2.XMLHTTP")) : (new XMLHttpRequest());
+
+		var sBody = _ele('txtBody').value;
+
+		var sUrl = _ele('inpServer').value.replace(/[\\\/]*$/, "") +
+			"/" + _ele('inpPath').value.replace(/^[\\\/]*/, "");
+
+		xq.open(_ele('inpMethod').value, sUrl, false);
+		//xq.setRequestHeader( "Content-Length", sPost.length );
+		xq.setRequestHeader("CONTENT-TYPE", _ele("inpContentType").value);
+		xq.send(sBody);
+
+		_ele('txtOut').value = xq.responseText;
+
+		try {
+			var json = eval("(" + xq.responseText + ")");
+			if (json.str) {
+				_ele('txtOut').value += "\r\n\r\n==============================\r\n" + json.str;
+			}
+		}
+		catch (ex) {
+			//alert(ex);
+		}
+
+	}
+
+</script>
+
+</html>
