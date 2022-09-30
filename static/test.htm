@@ -33,7 +33,7 @@
 		_ele("inpPath").value = path;
 		_ele("txtBody").value = (typeof bodyData === "string") ? bodyData : JSON.stringify(bodyData);
 
-		if (contentType) setContentType(contentType);
+		setContentType(contentType);
 	}
 </script>
 
@@ -74,6 +74,27 @@
 					<br>
 					<span class="-cmd" onclick="setPart('POST','/tasks/',
 						{title:'task'+(new Date()).getTime(),expire_at:'2022-09-26 12:34:56'},'json');" title="create">create</span>
+					<br>
+					<br>
+					<span class="-cmd" onclick="setPart('PUT','/tasks/',
+						{id:1,title:'task'+(new Date()).getTime(),expire_at:'2022-09-26 12:34:57'},'json');" title="update">update</span>
+					<br>
+					<span class="-cmd" onclick="setPart('PUT','/tasks/1/done',
+						'','');" title="update: done">update: done</span>
+					<br>
+					<br>
+					<span class="-cmd" onclick="setPart('DELETE','/tasks/1',
+						'','');" title="delete">delete</span>
+					<br>
+					<br>
+					<span class="-cmd" onclick="setPart('GET','/tasks/',
+						'','');" title="retrieve: all">retrieve: all</span>
+					<br>
+					<span class="-cmd" onclick="setPart('GET','/tasks/2',
+						'','');" title="retrieve: single">retrieve: single</span>
+					<br>
+					<span class="-cmd" onclick="setPart('GET','/tasks/expire/2022-09-29 21:26:00',
+						'','');" title="retrieve: expire">retrieve: expire</span>
 
 					<br>
 					<br>

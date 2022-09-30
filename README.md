@@ -54,9 +54,10 @@ A simple task application
 				]
 			}
 
-	* update,	PUT	/tasks/{id}
+	* update,	PUT	/tasks/
 		request
 			{
+				id: 123,	//id
 				title: "title",
 				expire_at: "YYYY-MM-dd hh:mm:ss",
 			}
@@ -81,4 +82,9 @@ A simple task application
 	* retrieve: expire,	GET		/tasks/expire/YYYY-MM-dd hh:mm:ss
 		response
 			refer to create
+
+# Console tool
+	
+
+
 
