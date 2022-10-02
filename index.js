@@ -2,28 +2,52 @@
 "use strict";
 
 console.log("============= system start =============");
-console.log(new Date());
+console.log((new Date()).toLocaleString());
 
 var http = require("http");
 //var https = require("https");
 
 var fs = require('fs');
+var path = require('path');
 
 var express = require('express');
 var compression = require('compression');
+var morgan = require('morgan');
 
-//var process = require("./process.js");
 var config = require('./config.js');
-
 var db = require('./lib/sqlite-db.js');
+var morgan_res_body = require('./lib/morgan-res-body.js');
+
+var morgan_ym_d_log_stream = require("./lib/morgan-ym-d-log-stream.js")
 
 var app = express();
 
 app.use(compression());
+
+morgan.token("req-body", (req, res) => {
+	if (req.body && res.statusCode < 400) {
+		//console.log(res.body);
+		return "\nReq-body: " + JSON.stringify(req.body);
+	}
+});
+morgan_res_body.addToken();
+
+var logger = morgan(
+	':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ' +
+	':req-body :res-body',
+	{
+		stream: morgan_ym_d_log_stream(path.join(__dirname, "log")),
+	}
+);
+
+app.use(logger);
+app.use(morgan_res_body.createMiddleware());
+
 app.use('/static', express.static('static'));
 
 var tasks = require('./lib/tasks');
 tasks(app, db);
+
 
 //http
 var httpServer;
