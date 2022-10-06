@@ -24,6 +24,8 @@ var app = express();
 
 app.use(compression());
 
+app.use('/static', express.static('static'));	//do not log static
+
 morgan.token("req-body", (req, res) => {
 	if (req.body && res.statusCode < 400) {
 		//console.log(res.body);
@@ -43,10 +45,9 @@ var logger = morgan(
 app.use(logger);
 app.use(morgan_res_body.createMiddleware());
 
-app.use('/static', express.static('static'));
 
-var tasks = require('./lib/tasks');
-tasks(app, db);
+var tasks_service = require('./lib/tasks-service');
+tasks_service(app, db);
 
 
 //http
