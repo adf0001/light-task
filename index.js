@@ -15,7 +15,7 @@ var morgan = require('morgan');
 
 var config = require('./config.js');
 var db = require('./lib/sqlite-db.js');
-var morgan_res_body = require('./lib/morgan-res-body.js');
+var morgan_res_body = require('morgan-res-body');
 
 
 var app = express();
@@ -30,7 +30,7 @@ morgan.token("req-body", (req, res) => {
 		return "\nReq-body: " + JSON.stringify(req.body);
 	}
 });
-morgan_res_body.addToken();
+morgan.token("res-body",morgan_res_body.tokenFunction);
 
 
 var logger = morgan(
