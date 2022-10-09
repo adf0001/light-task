@@ -26,7 +26,7 @@ A simple task application
 	sqlite 3
 
 ```sql
-	CREATE TABLE "tasks" (
+	CREATE TABLE if not exists "tasks" (
 		"id"  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 		"title"  text NOT NULL,
 		"updated_at"  DATETIME NOT NULL,	-- UTC+0

@@ -32,18 +32,18 @@ morgan.token("req-body", (req, res) => {
 morgan.token("res-body", morgan_res_body.tokenFunction);
 
 
-var logger = morgan(
+var morgan_logger = morgan(
 	':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ' +
 	':req-body :res-body',
 	{ stream: logStream, }
 );
 
-app.use(logger);
+app.use(morgan_logger);
 app.use(morgan_res_body.createMiddleware());
 
 
 var tasks_service = require('./lib/tasks-service');
-tasks_service(app, db);
+app.use("/tasks", tasks_service(db));
 
 
 //http
