@@ -2,7 +2,7 @@
 
 var path = require('path');
 var morgan_ym_d_log_stream = require("morgan-ym-d-log-stream")
-var logStream = morgan_ym_d_log_stream(path.join(__dirname, "log"));
+var logStream = morgan_ym_d_log_stream(path.join(__dirname, "log"), { consoleMax: 250 });
 
 logStream.write("\n=============\nstart at " + (new Date()).toLocaleString() + "\n");
 
@@ -17,7 +17,6 @@ var config = require('./config.js');
 var db = require('./lib/sqlite-db.js');
 var morgan_res_body = require('morgan-res-body');
 
-
 var app = express();
 
 app.use(compression());
@@ -30,7 +29,7 @@ morgan.token("req-body", (req, res) => {
 		return "\nReq-body: " + JSON.stringify(req.body);
 	}
 });
-morgan.token("res-body",morgan_res_body.tokenFunction);
+morgan.token("res-body", morgan_res_body.tokenFunction);
 
 
 var logger = morgan(
