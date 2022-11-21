@@ -14,7 +14,7 @@ var compression = require('compression');
 var morgan = require('morgan');
 
 var config = require('./config.js');
-var db = require('./lib/sqlite-db.js');
+var better_sqlite3 = require('better-sqlite3');
 var morgan_res_body = require('morgan-res-body');
 
 var app = express();
@@ -41,10 +41,11 @@ var morgan_logger = morgan(
 app.use(morgan_logger);
 app.use(morgan_res_body.createMiddleware());
 
+var db = new better_sqlite3(path.join(__dirname, config.sqlite_db));
 
-var tasks_service = require('./lib/tasks-service');
-app.use("/tasks", tasks_service(db));
-
+var task_service = require('task-service');
+var api = task_service["better-sqlite3-api"].get(db, { prepare: true });
+app.use("/tasks", task_service.loadService(express.Router(), api));
 
 //http
 var httpServer;
