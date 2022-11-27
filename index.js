@@ -17,6 +17,8 @@ var config = require('./config.js');
 var better_sqlite3 = require('better-sqlite3');
 var morgan_res_body = require('morgan-res-body');
 
+var exit_tool = require('./lib/exit-tool');
+
 var app = express();
 
 app.use(compression());
@@ -41,6 +43,23 @@ var morgan_logger = morgan(
 app.use(morgan_logger);
 app.use(morgan_res_body.createMiddleware());
 
+//common service
+app.get("/tasks/status", (req, res) => {
+	res.status(200).end("running");
+});
+
+var bySupervisor = process.argv.indexOf("--by-supervisor") > 0;
+
+app.get("/tasks/exit", (req, res) => {
+	res.status(200).end("exiting");
+	exit_tool({ delay: 200, killParent: bySupervisor })
+});
+app.get("/tasks/restart", (req, res) => {
+	res.status(200).end(bySupervisor ? "restarting" : "unsupported");
+	if (bySupervisor) exit_tool({ delay: 200 });
+});
+
+//task service
 var db = new better_sqlite3(path.join(__dirname, config.sqlite_db));
 
 var task_service = require('task-service');

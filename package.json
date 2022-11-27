@@ -17,7 +17,7 @@
     "compression": "^1.7.4",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
-    "morgan-res-body": "^1.0.1",
+    "morgan-res-body": "^1.0.2",
     "morgan-ym-d-log-stream": "^1.0.2",
     "supervisor": "^0.12.0",
     "task-service": "^1.0.1"
