@@ -1,6 +1,7 @@
 ﻿
 
 var path = require('path');
+var fs = require('fs');
 var morgan_ym_d_log_stream = require("morgan-ym-d-log-stream")
 var logStream = morgan_ym_d_log_stream(path.join(__dirname, "log"), { consoleMax: 250 });
 
@@ -60,7 +61,11 @@ app.get("/tasks/restart", (req, res) => {
 });
 
 //task service
-var db = new better_sqlite3(path.join(__dirname, config.sqlite_db));
+var dbFile = path.join(__dirname, config.sqlite_db);
+var dbPath = path.dirname(dbFile);
+if (!fs.existsSync(dbPath)) fs.mkdirSync(dbPath);
+
+var db = new better_sqlite3(dbFile);
 
 var task_service = require('task-service');
 var api = task_service["better-sqlite3-api"].get(db, { prepare: true });
