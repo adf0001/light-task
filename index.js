@@ -18,7 +18,7 @@ var config = require('./config.js');
 var better_sqlite3 = require('better-sqlite3');
 var morgan_res_body = require('morgan-res-body');
 
-var exit_tool = require('./lib/exit-tool');
+var exit_tool = require('exit-tool');
 
 var app = express();
 
