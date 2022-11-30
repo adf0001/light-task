@@ -4,6 +4,8 @@ var fs = require('fs');
 var child_process = require('child_process');
 var http = require('http');
 
+var simple_req = require('simple-req/req-by-node');
+
 var config = require('./config');
 
 var argv = process.argv;
@@ -15,30 +17,14 @@ function outpuError(err) {
 	else console.log(err?.message || err);
 }
 
-function jsonRequest(options, data, cb) {
-	var req = http.request({ host: config.http_host, port: config.http_port, ...options }, function (res) {
-		let ret = "";
-		res.on("data", (buffer) => { ret += buffer.toString(); });
-		res.on("end", () => {
-			try { ret = JSON.parse(ret) } catch (ex) { }
-			cb?.(null, ret);
-		});
-		res.on("error", (err) => { cb?.(err); });
-	});
-
-	req.on('error', (err) => { cb?.(err); });
-
-	if (data) {
-		req.setHeader("CONTENT-TYPE", "application/json");
-		req.write(JSON.stringify(data));
-	}
-	req.end();
+function jsonRequest(requestOptions, data, cb) {
+	simple_req({ host: config.http_host, port: config.http_port, ...requestOptions }, data, cb);
 }
 
 if (argv.indexOf("start") >= 0) {
 	//check status firstly
 	jsonRequest({ method: 'GET', path: '/tasks/status' }, null, (err, ret) => {
-		if (ret) console.log("from " + getAddrString() + ", " + ret);
+		if (ret) console.log("from " + getAddrString() + ", " + ret.body);
 		else if (err?.message?.indexOf("ECONNREFUSED") >= 0) {
 			var args = [
 				path.join(__dirname, "/node_modules/supervisor/lib/cli-wrapper.js"),
@@ -53,10 +39,17 @@ if (argv.indexOf("start") >= 0) {
 				"--by-supervisor",
 			];
 
-			var child = child_process.spawn("node", args,
-				{ detached: true, windowsHide: true, shell: false, stdio: 'ignore' }
-			);
-			child.unref();		//refer nodejs spawn/options.detached
+			if (argv.indexOf("--foreground") >= 0) {
+				//foreground
+				child_process.spawn("node", args, { shell: true, stdio: 'inherit' });
+			}
+			else {
+				//background
+				var child = child_process.spawn("node", args,
+					{ detached: true, windowsHide: true, shell: false, stdio: 'ignore' }
+				);
+				child.unref();		//refer nodejs spawn/options.detached
+			}
 		}
 		else outpuError(err);
 	});
@@ -64,12 +57,12 @@ if (argv.indexOf("start") >= 0) {
 else if (argv.indexOf("stop") >= 0) {
 	jsonRequest({ method: 'GET', path: '/tasks/exit' }, null, (err, ret) => {
 		if (err) outpuError(err);
-		else console.log(ret);
+		else console.log(ret.body);
 	});
 }
 else if (argv.indexOf("status") >= 0) {
 	jsonRequest({ method: 'GET', path: '/tasks/status' }, null, (err, ret) => {
 		if (err) outpuError(err);
-		else console.log(ret + ", at " + getAddrString());
+		else console.log(ret.body + ", at " + getAddrString());
 	});
 }

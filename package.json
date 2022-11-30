@@ -4,7 +4,11 @@
   "description": "A simple task application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node cli.js start",
+    "start:dev": "node cli.js start --foreground",
+    "stop": "node cli.js stop",
+    "status": "node cli.js status"
   },
   "keywords": [
     "task",
@@ -20,6 +24,7 @@
     "morgan": "^1.10.0",
     "morgan-res-body": "^1.0.2",
     "morgan-ym-d-log-stream": "^1.0.2",
+    "simple-req": "^1.0.1",
     "supervisor": "^0.12.0",
     "task-service": "^1.0.1"
   },
