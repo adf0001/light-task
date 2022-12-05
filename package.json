@@ -10,6 +10,9 @@
     "stop": "node cli.js stop",
     "status": "node cli.js status"
   },
+  "bin": {
+    "light-task": "./cli.js"
+  },
   "keywords": [
     "task",
     "application"
