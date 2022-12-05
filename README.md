@@ -26,7 +26,13 @@ A simple task application
 	refer to task-service @ npm
 
 # Console tool
-	
+```bat
+	npm run start		//to start
+	npm run	start:dev		//to start in develope mode
+	npm run stop		//to stop
+	npm run status		//to get the status
 
+	
+```
 
 

@@ -5,11 +5,12 @@ var child_process = require('child_process');
 var dayjs = require('dayjs');
 
 var simple_req = require('simple-req/req-by-node');
+var halfwidth_kit = require("halfwidth-kit");
 
 var config = require('./config');
 
 //var console_table_no_index= require("./lib/console-table-no-index");
-var half_width_length = require("./lib/half-width-length");
+
 var parse_datetime_by_year_first = require("./lib/parse-datetime-by-year-first");
 
 //some tools
@@ -52,10 +53,17 @@ function outputRows(rows) {
 	var n;
 
 	rows = rows.map((v) => {
+		var title = v.title;
+		var titleLen = halfwidth_kit.length(title, config.regHalfwidth);
+		if (rows.length > 1 && titleLen > 50) {
+			title = halfwidth_kit.slice(title, 0, 47, config.regHalfwidth) + "...";
+			titleLen = halfwidth_kit.length(title, config.regHalfwidth);
+		}
+
 		var row = {
 			id: "" + v.id,
-			title: v.title,
-			"title:length": half_width_length(v.title, config.regExtraHalf),
+			title: title,
+			"title:length": titleLen,
 			expire_at: formatServerUtc(v.expire_at),
 			done_at: formatServerUtc(v.done_at),
 		};
@@ -142,12 +150,18 @@ else if ((idx = argv.indexOf("add")) >= 0) {
 	}
 	else {
 		//console.log(title, dtString(dt));
-
 		jsonRequest({ method: 'POST', path: '/tasks/' }, { title, expire_at: dtString(dt, true) }, (err, ret) => {
 			//console.log(err, ret);
 			if (err) outputError(err, ret);
 			else outputRows(ret?.json?.rows);
 		});
 	}
+}
+else if ((idx = argv.indexOf("list")) >= 0) {
+	jsonRequest({ method: 'GET', path: '/tasks/' }, null, (err, ret) => {
+		//console.log(err, ret);
+		if (err) outputError(err, ret);
+		else outputRows(ret?.json?.rows);
+	});
 
 }

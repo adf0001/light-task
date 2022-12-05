@@ -22,6 +22,7 @@
     "dayjs": "^1.11.6",
     "exit-tool": "^1.0.1",
     "express": "^4.18.2",
+    "halfwidth-kit": "^1.0.1",
     "morgan": "^1.10.0",
     "morgan-res-body": "^1.0.2",
     "morgan-ym-d-log-stream": "^1.0.2",

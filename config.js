@@ -6,6 +6,6 @@ module.exports = {
 
 	sqlite_db: './db/light-task.sqlite',
 
-	regExtraHalf: /[∀𝑥ℝ,𝑥²≥0]+/g,		//extra half-width char-set
-
+	//regHalfwidth: false,		//halfwidth charset, refer halfwidth-kit @ npm
+	//regHalfwidth: /[∀ℝ²≥0\u0000-\u00ff\uFF61-\uFF9F\uFFE8-\uFFEE]+/ug,
 };
