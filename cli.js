@@ -88,6 +88,35 @@ function outputRows(rows) {
 	console.log("\n" + a.join("\n"));
 }
 
+function listExpiring(dts) {
+	if (dts.match(/^today$/i)) dts = dayjs(new Date()).format('YYYY-MM-DD');
+
+	var dt = parse_datetime_by_year_first(dts);
+	if (!dt) {
+		console.log("fail to parse year-first datetime value, " + dts);
+		return;
+	}
+
+	if (dtString(dt).match(/00\:00\:00$/) && dts.indexOf(":") < 0) {
+		//if only date and no time, set to the end of the day.
+		dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 23, 59, 59, 999);
+	}
+
+	jsonRequest(
+		{
+			method: 'GET',
+			path: '/tasks/expire/' + encodeURIComponent(dtString(dt, true))
+		},
+		null,
+		(err, ret) => {
+			//console.log(err, ret);
+			if (err) outputError(err, ret);
+			else outputRows(ret?.json?.rows);
+		}
+	);
+
+}
+
 //process
 
 var argv = process.argv, idx;
@@ -158,10 +187,56 @@ else if ((idx = argv.indexOf("add")) >= 0) {
 	}
 }
 else if ((idx = argv.indexOf("list")) >= 0) {
-	jsonRequest({ method: 'GET', path: '/tasks/' }, null, (err, ret) => {
-		//console.log(err, ret);
-		if (err) outputError(err, ret);
-		else outputRows(ret?.json?.rows);
-	});
+	var argList = argv[idx + 1];
+	var mr;
 
+	if (mr = argList?.match(/--(expire|expiring)(-.*)?/)) {
+		if (mr[2]) listExpiring(mr[2].slice(1));
+		else {
+			var argList2 = argv[idx + 2];
+			if (argList2 && argList2.charAt(0) !== "-") listExpiring(argList2);
+		}
+	}
+	else if (argList === "--all") {
+		jsonRequest({ method: 'GET', path: '/tasks/' }, null, (err, ret) => {
+			//console.log(err, ret);
+			if (err) outputError(err, ret);
+			else outputRows(ret?.json?.rows);
+		});
+	}
+	else if (argList?.match(/^\d+$/)) {
+		jsonRequest({ method: 'GET', path: '/tasks/' + argList }, null, (err, ret) => {
+			//console.log(err, ret);
+			if (err) outputError(err, ret);
+			else outputRows(ret?.json?.rows);
+		});
+	}
+	else if (!argList) {
+		listExpiring("today");
+	}
+	else console.log("list argument error");
+}
+else if ((idx = argv.indexOf("done")) >= 0) {
+	var argDone = argv[idx + 1];
+
+	if (argDone?.match(/^\d+$/)) {
+		jsonRequest({ method: 'PUT', path: '/tasks/' + argDone + "/done" }, null, (err, ret) => {
+			//console.log(err, ret);
+			if (err) outputError(err, ret);
+			else outputRows(ret?.json?.rows);
+		});
+	}
+	else console.log("done argument error");
+}
+else if ((idx = argv.indexOf("remove")) >= 0) {
+	var argRemove = argv[idx + 1];
+
+	if (argRemove?.match(/^\d+$/)) {
+		jsonRequest({ method: 'DELETE', path: '/tasks/' + argRemove }, null, (err, ret) => {
+			//console.log(err, ret);
+			if (err) outputError(err, ret);
+			else outputRows(ret?.json?.rows);
+		});
+	}
+	else console.log("remove argument error");
 }
