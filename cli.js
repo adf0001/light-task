@@ -13,6 +13,8 @@ var config = require('./config');
 
 var parse_datetime_by_year_first = require("parse-datetime-by-year-first");
 
+var _package_json = require("./package.json");
+
 //some tools
 
 function getAddrString() { return config.http_host + ":" + config.http_port; }
@@ -116,6 +118,36 @@ function listExpiring(dts) {
 	);
 
 }
+
+var helpList = [
+	"light-task cli, v" + _package_json.version,
+	"",
+	"Usage: light-task command [--options]",
+	"",
+	"command:",
+	"	start				start the service, in background.",
+	"		--foreground	start in foreground",
+	"	stop				stop the service",
+	"	status				check the service status",
+	"",
+	"	add 'title' 'expire'",
+	"              			add a task.",
+	"						'title': a title string",
+	"						'expire': a year-first datetime string, e.g. '2022-12-5' or '2012/12/25'",
+	"",
+	"	list				list tasks. Without options, it's same as '--expire today'.",
+	"		<id>			list detail by task id",
+	"		--all			list all",
+	"		--expire today",
+	"						list tasks that expire today",
+	"		--expire 'datetime'",
+	"						list by an appointed expire datetime",
+	"	done <id>			set done flag by task id",
+	"	remove <id>			remove by task id",
+].map((v) => {
+	//replace tab to spaces
+	return v.split("\t").reduce((r, rv) => r + "".repeat(4 - (r.length % 4)) + rv)
+});
 
 //process
 
@@ -239,4 +271,7 @@ else if ((idx = argv.indexOf("remove")) >= 0) {
 		});
 	}
 	else console.log("remove argument error");
+}
+else {
+	console.log(helpList.join("\n"));
 }

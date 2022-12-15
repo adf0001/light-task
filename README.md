@@ -43,11 +43,11 @@ A simple task application
 	light-task list --all
 	light-task list --expire today
 	light-task list --expire 2012/12/5
-	light-task list		//same as --expire today
-	light-task list <n>		//list single record by id
+	light-task list				//same as --expire today
+	light-task list <id>		//list single record by id
 
-	light-task done <n>		//set done flag by id
+	light-task done <id>		//set done flag by id
 
-	light-task remove <n>	//remove record by id
+	light-task remove <id>		//remove record by id
 
 ```
