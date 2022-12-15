@@ -11,7 +11,7 @@ var config = require('./config');
 
 //var console_table_no_index= require("./lib/console-table-no-index");
 
-var parse_datetime_by_year_first = require("./lib/parse-datetime-by-year-first");
+var parse_datetime_by_year_first = require("parse-datetime-by-year-first");
 
 //some tools
 
