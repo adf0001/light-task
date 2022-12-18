@@ -12,6 +12,7 @@ var config = require('./config');
 //var console_table_no_index= require("./lib/console-table-no-index");
 
 var parse_datetime_by_year_first = require("parse-datetime-by-year-first");
+var expandTabs = require("expand-tabs-to-spaces");
 
 var _package_json = require("./package.json");
 
@@ -119,7 +120,7 @@ function listExpiring(dts) {
 
 }
 
-var helpList = [
+var helpText = expandTabs([
 	"light-task cli, v" + _package_json.version,
 	"",
 	"Usage: light-task command [--options]",
@@ -144,10 +145,7 @@ var helpList = [
 	"						list by an appointed expire datetime",
 	"	done <id>			set done flag by task id",
 	"	remove <id>			remove by task id",
-].map((v) => {
-	//replace tab to spaces
-	return v.split("\t").reduce((r, rv) => r + "".repeat(4 - (r.length % 4)) + rv)
-});
+].join("\n"));
 
 //process
 
@@ -273,5 +271,5 @@ else if ((idx = argv.indexOf("remove")) >= 0) {
 	else console.log("remove argument error");
 }
 else {
-	console.log(helpList.join("\n"));
+	console.log(helpText);
 }
