@@ -1,6 +1,6 @@
 {
   "name": "light-task",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple task application",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "start": "node cli.js start",
     "start:dev": "node cli.js start --foreground",
     "stop": "node cli.js stop",
-    "status": "node cli.js status"
+    "status": "node cli.js status",
+    "postinstall": "node ./build/update-node-modules.js"
   },
   "bin": {
     "light-task": "./cmd.js"
@@ -31,6 +32,7 @@
     "morgan-res-body": "^1.0.2",
     "morgan-ym-d-log-stream": "^1.0.2",
     "parse-datetime-by-year-first": "^1.0.1",
+    "replace-file-by-list": "^1.0.2",
     "simple-req": "^1.0.2",
     "supervisor": "^0.12.0",
     "swagger-ui-express": "^4.6.0",
