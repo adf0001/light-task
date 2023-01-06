@@ -1,6 +1,6 @@
 {
   "name": "light-task",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple task application",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "status": "node cli.js status"
   },
   "bin": {
-    "light-task": "./cli.js"
+    "light-task": "./cmd.js"
   },
   "keywords": [
     "task",
