@@ -51,3 +51,6 @@ A simple task application
 	light-task remove <id>		//remove record by id
 
 ```
+
+# Swagger tool
+	Default at http://127.0.0.1:8071/swagger

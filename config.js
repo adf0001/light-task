@@ -8,4 +8,6 @@ module.exports = {
 
 	//regHalfwidth: false,		//halfwidth charset, refer halfwidth-kit @ npm
 	//regHalfwidth: /[∀ℝ²≥0\u0000-\u00ff\uFF61-\uFF9F\uFFE8-\uFFEE]+/ug,
+
+	swagger: true,	//load swagger
 };

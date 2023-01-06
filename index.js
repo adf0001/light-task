@@ -70,6 +70,18 @@ var task_service = require('task-service');
 var api = task_service["better-sqlite3-api"].get(db, { prepare: true });
 app.use("/tasks", task_service.loadService(express.Router(), api));
 
+//swagger
+if (config.swagger) {
+	var swaggerUi = require('swagger-ui-express');
+	var yamljs = require('yamljs');
+
+	var swaggerYaml = yamljs.load(__dirname + '/node_modules/task-service/doc/swagger.yaml');
+	swaggerYaml.servers = [{ url: "/tasks" }];
+	//console.log(swaggerYaml);
+
+	app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerYaml));
+}
+
 //http
 var httpServer;
 
