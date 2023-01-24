@@ -92,23 +92,27 @@ function outputRows(rows) {
 }
 
 function listExpiring(dts) {
-	if (dts.match(/^today$/i)) dts = dayjs(new Date()).format('YYYY-MM-DD');
+	if (dts === "all" || dts === "null") dts = null;
 
-	var dt = parse_datetime_by_year_first(dts);
-	if (!dt) {
-		console.log("fail to parse year-first datetime value, " + dts);
-		return;
-	}
+	if (dts) {
+		if (dts.match(/^today$/i)) dts = dayjs(new Date()).format('YYYY-MM-DD');
 
-	if (dtString(dt).match(/00\:00\:00$/) && dts.indexOf(":") < 0) {
-		//if only date and no time, set to the end of the day.
-		dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 23, 59, 59, 999);
+		var dt = parse_datetime_by_year_first(dts);
+		if (!dt) {
+			console.log("fail to parse year-first datetime value, " + dts);
+			return;
+		}
+
+		if (dtString(dt).match(/00\:00\:00$/) && dts.indexOf(":") < 0) {
+			//if only date and no time, set to the end of the day.
+			dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 23, 59, 59, 999);
+		}
 	}
 
 	jsonRequest(
 		{
 			method: 'GET',
-			path: '/tasks/expire/' + encodeURIComponent(dtString(dt, true))
+			path: '/tasks/expire/' + (dts ? encodeURIComponent(dtString(dt, true)) : "all")
 		},
 		null,
 		(err, ret) => {
@@ -136,13 +140,15 @@ var helpText = expandTabs([
 	"						'title': a title string",
 	"						'expire': a year-first datetime string, e.g. '2022-12-5' or '2012/12/25'",
 	"",
-	"	list				list tasks. Without options, it's same as '--expire today'.",
+	"	list				list tasks. Without options, it's same as '--expire all'.",
 	"		<id>			list detail by task id",
 	"		--all			list all",
 	"		--expire today",
 	"						list tasks that expire today",
 	"		--expire 'datetime'",
 	"						list by an appointed expire datetime",
+	"		--expire [all]",
+	"						list all not finished",
 	"	done <id>			set done flag by task id",
 	"	remove <id>			remove by task id",
 ].join("\n"));
@@ -220,11 +226,15 @@ else if ((idx = argv.indexOf("list")) >= 0) {
 	var argList = argv[idx + 1];
 	var mr;
 
-	if (mr = argList?.match(/--(expire|expiring)(-.*)?/)) {
+	if (mr = argList?.match(/--(expire|expiring)(-\S*)?/)) {
 		if (mr[2]) listExpiring(mr[2].slice(1));
 		else {
 			var argList2 = argv[idx + 2];
-			if (argList2 && argList2.charAt(0) !== "-") listExpiring(argList2);
+			if (argList2) {
+				if (argList2.charAt(0) !== "-") listExpiring(argList2);
+				else listExpiring();
+			}
+			else listExpiring();
 		}
 	}
 	else if (argList === "--all") {
@@ -242,7 +252,7 @@ else if ((idx = argv.indexOf("list")) >= 0) {
 		});
 	}
 	else if (!argList) {
-		listExpiring("today");
+		listExpiring();
 	}
 	else console.log("list argument error");
 }

@@ -54,7 +54,7 @@ A simple task application
 
 # CLI tool
 ```text
-light-task cli, v1.0.2
+light-task cli, v1.0.3
 
 Usage: light-task command [--options]
 
@@ -69,13 +69,15 @@ command:
                         'title': a title string
                         'expire': a year-first datetime string, e.g. '2022-12-5' or '2012/12/25'
 
-    list                list tasks. Without options, it's same as '--expire today'.
+    list                list tasks. Without options, it's same as '--expire all'.
         <id>            list detail by task id
         --all           list all
         --expire today
                         list tasks that expire today
         --expire 'datetime'
                         list by an appointed expire datetime
+        --expire [all]
+                        list all not finished
     done <id>           set done flag by task id
     remove <id>         remove by task id
 
