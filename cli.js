@@ -1,5 +1,6 @@
 ﻿
 var path = require('path');
+var fs = require('fs');
 var child_process = require('child_process');
 
 var dayjs = require('dayjs');
@@ -15,6 +16,8 @@ var parse_datetime_by_year_first = require("parse-datetime-by-year-first");
 var expandTabs = require("expand-tabs-to-spaces");
 
 var _package_json = require("./package.json");
+
+var dbFile = path.join(__dirname, config.sqlite_db);
 
 //some tools
 
@@ -124,6 +127,50 @@ function listExpiring(dts) {
 
 }
 
+function restoreDbFile(fromFile) {
+	if (fromFile) {
+		if (!fs.existsSync(fromFile)) {
+			console.log("file not exists, " + fromFile);
+			retrun;
+		}
+		fs.copyFileSync(fromFile, dbFile);
+		console.log("restored from " + fromFile + "\nto " + dbFile);
+	}
+	else {
+		var bakList = fs.readdirSync(".").filter((v) => v.match(/^light\-task\.sqlite\.[^\.]+\.bak$/));
+		if (!(bakList?.length > 0)) {
+			console.log("no backup file in current directory, please appoint a file to back up from.");
+			return;
+		}
+
+		bakList.sort();
+		var showList = bakList.map((v, i) => "#" + (i + 1) + " " + v);
+		console.log("\n" + showList.join("\n"));
+
+		//show menu & select
+
+		const readline = require('readline').createInterface({
+			input: process.stdin,
+			// output: process.stdout,		//to avoid windows console scrolling issue.
+		});
+
+		process.stdout.write("Select a file to backup from: #");
+		readline.question("", inp => {
+			readline.close();
+
+			var idx = parseInt(inp);
+			if (!idx || idx < 1 || idx > bakList.length) {
+				console.log("no file select");
+				return;
+			}
+
+			fromFile = bakList[idx - 1];
+			fs.copyFileSync(fromFile, dbFile);
+			console.log("\nrestored from " + fromFile + "\nto " + dbFile + "\n");
+		});
+	}
+}
+
 var helpText = expandTabs([
 	"light-task cli, v" + _package_json.version,
 	"",
@@ -134,6 +181,9 @@ var helpText = expandTabs([
 	"		--foreground	start in foreground",
 	"	stop				stop the service",
 	"	status				check the service status",
+	"",
+	"	backup [file]		backup database to a file, or to the working directory",
+	"	restore [file]		restore database from a file, or from working directory",
 	"",
 	"	add 'title' 'expire'",
 	"              			add a task.",
@@ -151,6 +201,7 @@ var helpText = expandTabs([
 	"						list all not finished",
 	"	done <id>			set done flag by task id",
 	"	remove <id>			remove by task id",
+	"",
 ].join("\n"));
 
 //process
@@ -200,6 +251,23 @@ else if (argv.indexOf("status") >= 0) {
 	jsonRequest({ method: 'GET', path: '/tasks/status' }, null, (err, ret) => {
 		if (err) outputError(err);
 		else console.log(ret.body + ", at " + getAddrString());
+	});
+}
+else if ((idx = argv.indexOf("backup")) >= 0) {
+	var toFile = argv[idx + 1]?.trim();
+	if (!toFile) toFile = "light-task.sqlite." + dtString(new Date()).replace(/[-:]/g, "").replace(/\s/g, "-") + ".bak";
+
+	fs.copyFileSync(dbFile, toFile, fs.constants.COPYFILE_EXCL);
+	console.log("backed up to file " + toFile)
+}
+else if ((idx = argv.indexOf("restore")) >= 0) {
+	jsonRequest({ method: 'GET', path: '/tasks/status' }, null, (err, ret) => {
+		if (!err) {
+			console.log("checked the server is running, please stop it before restoring operation.");
+			return;
+		}
+		var fromFile = argv[idx + 1]?.trim();
+		restoreDbFile(fromFile);
 	});
 }
 else if ((idx = argv.indexOf("add")) >= 0) {
