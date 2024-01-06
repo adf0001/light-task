@@ -1,6 +1,18 @@
 # light-task
 A simple task application
 
+# install
+npm i -g light-task
+
+NOTE:
+
+When installing, the current working directory ( the cwd )  will be set as the database directory,
+and a database file `light-task.sqlite` will be created when the application run.
+
+If the package is uninstalled, please manually removed the database file if needed.
+
+When update the package, to keep the database location unchanged, please run the npm command at the same directory.
+
 # Framework
 	nodejs, express.
 
@@ -54,7 +66,7 @@ A simple task application
 
 # CLI tool
 ```text
-light-task cli, v1.0.3
+light-task cli, v1.0.4
 
 Usage: light-task command [--options]
 
@@ -64,12 +76,16 @@ command:
     stop                stop the service
     status              check the service status
 
+    backup [file]       backup database
+    restore [file]      restore database
+
     add 'title' 'expire'
                         add a task.
                         'title': a title string
-                        'expire': a year-first datetime string, e.g. '2022-12-5' or '2012/12/25'
+                        'expire': a year-first datetime string,
+                                  e.g. '2022-12-5' or '2012/12/25'
 
-    list                list tasks. Without options, it's same as '--expire all'.
+    list                list tasks, same as '--expire all' if no option.
         <id>            list detail by task id
         --all           list all
         --expire today

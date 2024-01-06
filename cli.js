@@ -17,7 +17,7 @@ var expandTabs = require("expand-tabs-to-spaces");
 
 var _package_json = require("./package.json");
 
-var dbFile = path.join(__dirname, config.sqlite_db);
+var dbFile = config.sqlite_db.startsWith(".") ? path.join(__dirname, config.sqlite_db) : config.sqlite_db;
 
 //some tools
 
@@ -182,15 +182,16 @@ var helpText = expandTabs([
 	"	stop				stop the service",
 	"	status				check the service status",
 	"",
-	"	backup [file]		backup database to a file, or to the working directory",
-	"	restore [file]		restore database from a file, or from working directory",
+	"	backup [file]		backup database",
+	"	restore [file]		restore database",
 	"",
 	"	add 'title' 'expire'",
 	"              			add a task.",
 	"						'title': a title string",
-	"						'expire': a year-first datetime string, e.g. '2022-12-5' or '2012/12/25'",
+	"						'expire': a year-first datetime string,",
+	"								  e.g. '2022-12-5' or '2012/12/25'",
 	"",
-	"	list				list tasks. Without options, it's same as '--expire all'.",
+	"	list				list tasks, same as '--expire all' if no option.",
 	"		<id>			list detail by task id",
 	"		--all			list all",
 	"		--expire today",

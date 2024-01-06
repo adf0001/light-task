@@ -60,7 +60,7 @@ app.get("/tasks/restart", (req, res) => {
 });
 
 //task service
-var dbFile = path.join(__dirname, config.sqlite_db);
+var dbFile = config.sqlite_db.startsWith(".") ? path.join(__dirname, config.sqlite_db) : config.sqlite_db;
 var dbPath = path.dirname(dbFile);
 if (!fs.existsSync(dbPath)) fs.mkdirSync(dbPath);
 

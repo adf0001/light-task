@@ -1,6 +1,6 @@
 {
   "name": "light-task",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A simple task application",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,7 @@
     "start:dev": "node cli.js start --foreground",
     "stop": "node cli.js stop",
     "status": "node cli.js status",
-    "postinstall": "node ./build/update-node-modules.js",
-    "uninstall": "backup.js"
+    "postinstall": "node ./build/update-node-modules.js"
   },
   "bin": {
     "light-task": "./cmd.js"
